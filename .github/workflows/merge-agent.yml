@@ -36,7 +36,10 @@ jobs:
           git checkout -b auto-merge-release
           git add .
           git diff --cached --quiet || git commit -m "Auto-merged release (no conflicts)"
-          git push origin auto-merge-release
+      - name: Push auto-merge branch
+        run: |
+          git push origin auto-merge-release --force
+
 
       - name: Resolve conflicts using OpenAI
         run: python3 .github/scripts/resolve_conflicts.py
