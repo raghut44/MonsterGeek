@@ -22,8 +22,8 @@ jobs:
 
       - name: Create merge branches
         run: |
-          git checkout develop
-          git pull origin develop
+          git checkout main
+          git pull origin main
           git merge origin/release || true
           cp -r . ../conflict-copy
           mkdir auto-merge
