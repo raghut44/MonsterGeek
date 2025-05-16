@@ -22,7 +22,7 @@ RELEASE VERSION:
 Merged Result:
 """
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
     )
