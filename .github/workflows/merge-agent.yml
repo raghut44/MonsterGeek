@@ -1,0 +1,51 @@
+name: Smart Merge Agent
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smart-merge:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git config
+        run: |
+          git config user.name "merge-bot"
+          git config user.email "bot@example.com"
+
+      - name: Create merge branches
+        run: |
+          git checkout develop
+          git pull origin develop
+          git merge origin/release || true
+          cp -r . ../conflict-copy
+          mkdir auto-merge
+          git diff --name-only --diff-filter=U > ../conflicts.txt || true
+          git checkout -b auto-merge-release
+          git add .
+          git diff --cached --quiet || git commit -m "Auto-merged release (no conflicts)"
+          git push origin auto-merge-release
+
+      - name: Resolve conflicts using OpenAI
+        run: python3 .github/scripts/resolve_conflicts.py
+
+      - name: Push conflict-resolved branch
+        run: |
+          git checkout -b conflict-merge-release
+          cp -r ../conflict-copy/* .
+          git add .
+          git diff --cached --quiet || git commit -m "AI-resolved conflicts"
+          git push origin conflict-merge-release
+
+      - name: Create PRs using GitHub CLI
+        run: |
+          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+          gh pr create --title "Auto Merge: release → develop (no conflicts)" --body "Auto merged non-conflicted files" --head auto-merge-release --base develop
+          gh pr create --title "AI Merge: release → develop (resolved conflicts)" --body "AI resolved conflicted files from release to develop" --head conflict-merge-release --base develop
