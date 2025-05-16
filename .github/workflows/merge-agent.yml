@@ -23,7 +23,7 @@ jobs:
           git config user.email "raghut44@gmail.com"
           
       - name: Install OpenAI Python SDK
-        run: pip install openai
+        run: pip install openai==0.28
         
       - name: Create merge branches
         run: |
