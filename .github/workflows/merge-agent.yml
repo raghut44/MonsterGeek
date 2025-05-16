@@ -20,8 +20,11 @@ jobs:
       - name: Set up Git config
         run: |
           git config user.name "merge-bot"
-          git config user.email "bot@example.com"
-
+          git config user.email "raghut44@gmail.com"
+          
+      - name: Install OpenAI Python SDK
+        run: pip install openai
+        
       - name: Create merge branches
         run: |
           git checkout main
