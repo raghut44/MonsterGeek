@@ -60,9 +60,6 @@ jobs:
           sudo apt install gh -y
 
 
-
-      - name: Authenticate GitHub CLI
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Create PRs using GitHub CLI
         run: |
           gh pr create --title "Auto Merge: release → develop (no conflicts)" --body "Auto merged non-conflicted files" --head auto-merge-release --base main
