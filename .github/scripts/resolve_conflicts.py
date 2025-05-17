@@ -40,7 +40,9 @@ def resolve_conflicts_in_file(file_path):
 
     for match in reversed(conflicts):
         dev_code = match.group(1).strip()
+        print("devcode "+dev_code)
         rel_code = match.group(2).strip()
+        print("relcode "+rel_code)
         merged_code = resolve_with_gpt(dev_code, rel_code)
         start, end = match.span()
         content = content[:start] + merged_code + content[end:]
