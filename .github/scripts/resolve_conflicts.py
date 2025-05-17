@@ -55,7 +55,7 @@ Merged Result:
             ],
         model="llama-3.3-70b-versatile",
     )
-    print("result "+chat_completion.choices[0].message.content)
+    print("result === "+chat_completion.choices[0].message.content)
     return chat_completion.choices[0].message.content
 
 def extract_conflicts(file_path):
