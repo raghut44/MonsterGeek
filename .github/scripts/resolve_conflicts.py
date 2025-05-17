@@ -2,6 +2,9 @@ import os
 import re
 import openai
 from groq import Groq
+import subprocess
+import sys
+from pathlib import Path
 
 # Set OpenAI key from env
 api_key = "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"
@@ -17,6 +20,14 @@ client = Groq(
 CONFLICT_PATTERN = re.compile(
     r"<<<<<<< .+?\n(.*?)=======\n(.*?)>>>>>>> .+?", re.DOTALL
 )
+
+def run(cmd):
+    print(f"Running: {cmd}")
+    result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+    if result.returncode != 0:
+        print("Error:", result.stderr)
+        sys.exit(result.returncode)
+    return result.stdout.strip()
 
 def resolve_with_gpt(dev_code, rel_code):
     prompt = f"""
@@ -79,7 +90,14 @@ def main():
             print(f"✅ Resolved: {fpath}")
         else:
             print(f"⚠️ No conflicts in: {fpath}")
+    run("git config user.name 'github-actions'")
+    run("git config user.email 'github-actions@github.com'")
+    run(f"git checkout -b conflict-merge-release")
 
+    for file in files:
+        run(f"git add {file}")
+    run(f"git commit -m 'Auto-resolved conflicts using LLM'")
+    run(f"git push origin conflict-merge-release")
     if not resolved_any:
         print("No conflicts were resolved.")
 
