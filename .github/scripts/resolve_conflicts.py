@@ -3,7 +3,10 @@ import re
 import openai
 
 # Set OpenAI key from env
-openai.api_key = os.getenv("OPENAI_API_KEY")
+#openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("GROQ_API_KEY")
+openai.base_url = "https://api.groq.com/openai/v1"
+MODEL = "mixtral-8x7b-32768"
 
 CONFLICT_PATTERN = re.compile(
     r"<<<<<<< .+?\n(.*?)=======\n(.*?)>>>>>>> .+?", re.DOTALL
@@ -22,9 +25,13 @@ RELEASE VERSION:
 Merged Result:
 """
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": "You are an Expert developer in resolving Git conflicts."},
+            {"role": "user", "content": prompt}
+        ],
         temperature=0.2,
+        max_tokens=2048
     )
     return response.choices[0].message.content.strip()
 
