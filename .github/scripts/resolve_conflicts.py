@@ -3,8 +3,8 @@ import re
 import openai
 
 # Set OpenAI key from env
-#openai.api_key = os.getenv("OPENAI_API_KEY")
-openai.api_key = os.getenv("GROQ_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
+#openai.api_key = os.getenv("GROQ_API_KEY")
 openai.base_url = "https://api.groq.com/openai/v1"
 MODEL = "mixtral-8x7b-32768"
 
