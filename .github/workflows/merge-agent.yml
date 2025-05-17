@@ -24,6 +24,8 @@ jobs:
           
       - name: Install OpenAI Python SDK
         run: pip install openai==0.28
+      - name: Install OpenAI Groq SDK
+        run: pip install groq
         
       - name: Create merge branches
         run: |
