@@ -43,16 +43,8 @@ jobs:
           git push origin auto-merge-release --force
 
 
-      - name: Resolve conflicts using OpenAI
+      - name: Resolve conflicts using OpenAI and push conflicts
         run: python3 .github/scripts/resolve_conflicts.py
-
-      - name: Push conflict-resolved branch
-        run: |
-          git checkout -b conflict-merge-release
-          cp -r ../conflict-copy/* .
-          git add .
-          git diff --cached --quiet || git commit -m "AI-resolved conflicts"
-          git push origin conflict-merge-release
 
       - name: Create PRs using GitHub CLI
         run: |
