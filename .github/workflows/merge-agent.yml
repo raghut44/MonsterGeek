@@ -65,5 +65,5 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Create PRs using GitHub CLI
         run: |
-          gh pr create --title "Auto Merge: release → develop (no conflicts)" --body "Auto merged non-conflicted files" --head auto-merge-release --base develop
-          gh pr create --title "AI Merge: release → develop (resolved conflicts)" --body "AI resolved conflicted files from release to develop" --head conflict-merge-release --base develop
+          gh pr create --title "Auto Merge: release → develop (no conflicts)" --body "Auto merged non-conflicted files" --head auto-merge-release --base main
+          gh pr create --title "AI Merge: release → develop (resolved conflicts)" --body "AI resolved conflicted files from release to develop" --head conflict-merge-release --base main
