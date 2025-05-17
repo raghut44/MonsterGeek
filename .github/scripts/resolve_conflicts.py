@@ -1,3 +1,5 @@
+
+
 import os
 import re
 import openai
@@ -8,17 +10,17 @@ from pathlib import Path
 
 # Set OpenAI key from env
 api_key = "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"
-#openai.api_key = os.getenv("GROQ_API_KEY")
+# openai.api_key = os.getenv("GROQ_API_KEY")
 openai.base_url = "https://api.groq.com/openai/v1"
 MODEL = "mixtral-8x7b-32768"
 
 client = Groq(
-    # This is the default and can be omitted
     api_key=api_key,
 )
 
-CONFLICT_PATTERN = re.compile(
-    r"<<<<<<< .+?\n(.*?)=======\n(.*?)>>>>>>> .+?", re.DOTALL
+# This pattern will match full conflict blocks, including their markers
+CONFLICT_BLOCK_PATTERN = re.compile(
+    r"(<<<<<<< .+?\n)(.*?)(=======\n)(.*?)(>>>>>>> .+?\n)", re.DOTALL
 )
 
 def run(cmd):
@@ -38,7 +40,7 @@ Your task is to intelligently merge two versions of code — the develop and rel
 🚫 DO NOT explain.
 🚫 DO NOT include any comments, headings, or formatting.
 ✅ DO return ONLY the final merged code — just the raw code block.
-If lines are commented in both version pick any one of it. And Do not change to uncommented code
+If lines are commented in both versions, pick any one of them. Do NOT uncomment them.
 
 DEVELOP VERSION:
 {dev_code}
@@ -49,19 +51,20 @@ RELEASE VERSION:
 Merged Result:
 """
     chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are an Expert developer in resolving Git conflicts."},
-                {"role": "user", "content": prompt}
-            ],
+        messages=[
+            {"role": "system", "content": "You are an Expert developer in resolving Git conflicts."},
+            {"role": "user", "content": prompt}
+        ],
         model="llama-3.3-70b-versatile",
     )
-    print("result === "+chat_completion.choices[0].message.content)
-    return chat_completion.choices[0].message.content
+    response = chat_completion.choices[0].message.content
+    print("🔀 Merged Result:\n", response)
+    return response
 
 def extract_conflicts(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
-    return list(CONFLICT_PATTERN.finditer(content)), content
+    return list(CONFLICT_BLOCK_PATTERN.finditer(content)), content
 
 def resolve_conflicts_in_file(file_path):
     conflicts, content = extract_conflicts(file_path)
@@ -69,13 +72,21 @@ def resolve_conflicts_in_file(file_path):
         return False
 
     for match in reversed(conflicts):
-        dev_code = match.group(1).strip()
-        print("devcode "+dev_code)
-        rel_code = match.group(2).strip()
-        print("relcode "+rel_code)
+        dev_code_raw = match.group(2)
+        rel_code_raw = match.group(4)
+
+        # Preserve spacing: Don't strip lines, pass raw content to GPT
+        dev_code = dev_code_raw.rstrip('\n')
+        rel_code = rel_code_raw.rstrip('\n')
+
         merged_code = resolve_with_gpt(dev_code, rel_code)
+
+        # Cleanup known junk strings like 'rigin/release'
+        merged_code_cleaned = re.sub(r'\brigin/release\b', '', merged_code)
+
+        # Preserve spacing/formatting of the original block
         start, end = match.span()
-        content = content[:start] + merged_code + content[end:]
+        content = content[:start] + merged_code_cleaned + content[end:]
 
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
@@ -97,15 +108,17 @@ def main():
             print(f"✅ Resolved: {fpath}")
         else:
             print(f"⚠️ No conflicts in: {fpath}")
-    run("git config user.name 'github-actions'")
-    run("git config user.email 'github-actions@github.com'")
-    run(f"git checkout -b conflict-merge-release")
 
-    for file in files:
-        run(f"git add {file}")
-    run(f"git commit -m 'Auto-resolved conflicts using LLM'")
-    run(f"git push origin conflict-merge-release")
-    if not resolved_any:
+    if resolved_any:
+        run("git config user.name 'github-actions'")
+        run("git config user.email 'github-actions@github.com'")
+        run("git checkout -b conflict-merge-release")
+
+        for file in files:
+            run(f"git add {file}")
+        run("git commit -m 'Auto-resolved conflicts using LLM'")
+        run("git push origin conflict-merge-release")
+    else:
         print("No conflicts were resolved.")
 
 if __name__ == "__main__":
