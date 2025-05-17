@@ -31,7 +31,13 @@ def run(cmd):
 
 def resolve_with_gpt(dev_code, rel_code):
     prompt = f"""
-You are an expert developer. Resolve this git conflict by intelligently merging the two versions. Retain meaningful code from both sides.
+You are an expert developer.
+
+Your task is to intelligently merge two versions of code — the develop and release versions — into a clean, final version.
+
+🚫 DO NOT explain.
+🚫 DO NOT include any comments, headings, or formatting.
+✅ DO return ONLY the final merged code — just the raw code block.
 
 DEVELOP VERSION:
 {dev_code}
