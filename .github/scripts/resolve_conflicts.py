@@ -3,10 +3,15 @@ import re
 import openai
 
 # Set OpenAI key from env
-openai.api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
 #openai.api_key = os.getenv("GROQ_API_KEY")
 openai.base_url = "https://api.groq.com/openai/v1"
 MODEL = "mixtral-8x7b-32768"
+
+client = openai.OpenAI(
+    api_key=api_key,
+    base_url="https://api.groq.com/openai/v1"
+)
 
 CONFLICT_PATTERN = re.compile(
     r"<<<<<<< .+?\n(.*?)=======\n(.*?)>>>>>>> .+?", re.DOTALL
@@ -24,15 +29,16 @@ RELEASE VERSION:
 
 Merged Result:
 """
-    response = openai.ChatCompletion.create(
-        model=MODEL,
+
+    response = client.chat.completions.create(
+    model=MODEL,
         messages=[
             {"role": "system", "content": "You are an Expert developer in resolving Git conflicts."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.2,
         max_tokens=2048
-    )
+)
     return response.choices[0].message.content.strip()
 
 def extract_conflicts(file_path):
