@@ -4,7 +4,7 @@ import openai
 from groq import Groq
 
 # Set OpenAI key from env
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = "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"
 #openai.api_key = os.getenv("GROQ_API_KEY")
 openai.base_url = "https://api.groq.com/openai/v1"
 MODEL = "mixtral-8x7b-32768"
