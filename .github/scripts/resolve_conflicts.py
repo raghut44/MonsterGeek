@@ -38,6 +38,7 @@ Your task is to intelligently merge two versions of code — the develop and rel
 🚫 DO NOT explain.
 🚫 DO NOT include any comments, headings, or formatting.
 ✅ DO return ONLY the final merged code — just the raw code block.
+If lines are commented in both version pick any one of it.
 
 DEVELOP VERSION:
 {dev_code}
