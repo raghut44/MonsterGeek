@@ -6,7 +6,7 @@ import os
 import sqlite3
 
 from google import genai
-## Configure Genai Key
+## Configure Genai Key1234
 
 #genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
