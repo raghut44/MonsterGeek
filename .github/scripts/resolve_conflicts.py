@@ -115,10 +115,27 @@ def main():
 
         for file in files:
             run(f"git add {file}")
+        restore_non_conflicted_files(files):
         run("git commit -m 'Auto-resolved conflicts using LLM'")
         run("git push origin conflict-merge-release")
     else:
         print("No conflicts were resolved.")
+
+def restore_non_conflicted_files(conflicted_files):
+    # Get all changed files in working directory
+    all_changed = run("git diff --name-only").splitlines()
+    
+    conflicted_set = set(conflicted_files)
+    to_restore = [f for f in all_changed if f not in conflicted_set]
+
+    if to_restore:
+        print("🧹 Restoring non-conflicted files:")
+        for file in to_restore:
+            print("  ➤", file)
+        run("git restore " + " ".join(to_restore))
+    else:
+        print("✅ No non-conflicted files to restore.")
+        
 
 if __name__ == "__main__":
     main()
