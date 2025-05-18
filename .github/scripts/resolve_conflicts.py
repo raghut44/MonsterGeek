@@ -123,7 +123,7 @@ def main():
 
 def restore_non_conflicted_files(conflicted_files):
     # Get all changed files in working directory
-    all_changed = run("git diff --name-only --diff-filter=AM").splitlines()
+    all_changed = run("git diff --name-only HEAD").splitlines()
     print("All changed set")
     print(all_changed)
     conflicted_set = set(conflicted_files)
