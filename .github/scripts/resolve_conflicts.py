@@ -12,7 +12,6 @@ from pathlib import Path
 api_key = os.getenv("GROQ_API_KEY")
 # openai.api_key = os.getenv("GROQ_API_KEY")
 openai.base_url = "https://api.groq.com/openai/v1"
-MODEL = "mixtral-8x7b-32768"
 
 client = Groq(
     api_key=api_key,
