@@ -112,7 +112,7 @@ def main():
     if resolved_any:
         run("git config user.name 'github-actions'")
         run("git config user.email 'github-actions@github.com'")
-        run("git checkout -b conflict-merge-release")
+        run("git checkout -b conflict-merge-release HEAD")
 
         for file in files:
             run(f"git add {file}")
