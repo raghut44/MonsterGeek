@@ -115,7 +115,7 @@ def main():
 
         for file in files:
             run(f"git add {file}")
-        restore_non_conflicted_files(files):
+        restore_non_conflicted_files(files)
         run("git commit -m 'Auto-resolved conflicts using LLM'")
         run("git push origin conflict-merge-release")
     else:
