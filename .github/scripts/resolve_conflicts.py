@@ -124,8 +124,11 @@ def main():
 def restore_non_conflicted_files(conflicted_files):
     # Get all changed files in working directory
     all_changed = run("git diff --name-only").splitlines()
-    
+    print("All changed set")
+    print(all_changed)
     conflicted_set = set(conflicted_files)
+    print("conflicted set")
+    print(conflicted_set)
     to_restore = [f for f in all_changed if f not in conflicted_set]
 
     if to_restore:
