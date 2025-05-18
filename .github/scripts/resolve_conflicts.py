@@ -134,9 +134,13 @@ def restore_non_conflicted_files(conflicted_files):
     if to_restore:
         print("🧹 Restoring non-conflicted files:")
         for file in to_restore:
-            print("  ➤", file)
-            run("git restore --staged " + " ".join(to_restore))
-            run("git restore " + " ".join(to_restore))
+            try:
+                # First try to restore normally
+                run(f"git restore --staged {file}")
+                run(f"git restore {file}")
+            except SystemExit:
+                print(f"⚠️ Could not restore {file}, trying to checkout from release branch.")
+                
     else:
         print("✅ No non-conflicted files to restore.")
         
