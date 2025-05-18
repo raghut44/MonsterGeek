@@ -99,6 +99,7 @@ def main():
     with open("../conflicts.txt") as f:
         files = [line.strip() for line in f if line.strip()]
 
+    print("confl files "+files)
     resolved_any = False
     for fpath in files:
         print(f"🔧 Resolving conflicts in: {fpath}")
