@@ -27,20 +27,28 @@ jobs:
       - name: Install OpenAI Groq SDK
         run: pip install groq
         
-      - name: Create merge branches
+      - name: Merge release into develop
         run: |
           git checkout main
           git pull origin main
           git merge origin/release || true
-          cp -r . ../conflict-copy
-          mkdir auto-merge
-          git diff --name-only --diff-filter=U > ../conflicts.txt || true
-          git checkout -b auto-merge-release
-          git add .
-          git diff --cached --quiet || git commit -m "Auto-merged release (no conflicts)"
-      - name: Push auto-merge branch
+          
+      - name: Identify conflicted files
         run: |
-          git push origin auto-merge-release --force
+          git status --porcelain | grep '^UU' | awk '{print $2}' > conflicted.txt || true
+          echo "Conflicted files:"
+          cat conflicted.txt
+
+      - name: Create auto-merge-release branch (non-conflicted files)
+        run: |
+          git checkout -b auto-merge-release
+          for file in $(cat conflicted.txt); do
+            git restore --staged "$file"
+            git restore "$file"
+          done
+          git add -u
+          git commit -m "Auto-merged non-conflicted files from release"
+          git push origin auto-merge-release
 
 
       - name: Resolve conflicts using OpenAI and push conflicts
