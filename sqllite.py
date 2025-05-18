@@ -6,7 +6,7 @@ connection=sqlite3.connect("student.db")
 # Create a cursor object to insert record,create table
 
 cursor=connection.cursor()
-
+#new line
 ## create the table
 table_info="""
 Create table STUDENT(NAME VARCHAR(25),CLASS VARCHAR(25),
