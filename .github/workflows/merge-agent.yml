@@ -49,7 +49,11 @@ jobs:
           git add -u
           git commit -m "Auto-merged non-conflicted files from release"
           git push origin auto-merge-release
-
+      - name: Prepare for conflict-merge-release branch (conflicted files)
+        run: |
+          git checkout main
+          git pull origin main
+          git merge origin/release || true  # allow merge to continue even if conflicts
 
       - name: Resolve conflicts using OpenAI and push conflicts
         run: python3 .github/scripts/resolve_conflicts.py
