@@ -135,8 +135,8 @@ def restore_non_conflicted_files(conflicted_files):
         print("🧹 Restoring non-conflicted files:")
         for file in to_restore:
             print("  ➤", file)
-            run("git restore --staged" + " ".join(file))
-            run("git restore " + " ".join(file))
+            run("git restore --staged" + " ".join(to_restore))
+            run("git restore " + " ".join(to_restore))
     else:
         print("✅ No non-conflicted files to restore.")
         
