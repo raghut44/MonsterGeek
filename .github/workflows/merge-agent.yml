@@ -54,6 +54,7 @@ jobs:
           git checkout main
           git pull origin main
           git merge origin/release || true  # allow merge to continue even if conflicts
+          git diff --name-only --diff-filter=U > conflicts.txt
 
       - name: Resolve conflicts using OpenAI and push conflicts
         run: python3 .github/scripts/resolve_conflicts.py
