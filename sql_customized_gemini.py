@@ -8,12 +8,7 @@ import sqlite3
 from google import genai
 ## Configure Genai Key
 
-<<<<<<< HEAD
 #genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))####12
-=======
-#genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))##
->>>>>>> origin/release
-
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 ## My changes in release branch
